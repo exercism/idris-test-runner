@@ -1,0 +1,4 @@
+package helloworld
+
+sourcedir = "src"
+modules = HelloWorld
