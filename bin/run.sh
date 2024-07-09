@@ -31,11 +31,18 @@ mkdir -p "${output_dir}"
 
 echo "${slug}: testing..."
 
+build_output=$(cd "${solution_dir}"; pack remove `basename *.ipkg .ipkg` > /dev/null; pack build `basename *.ipkg .ipkg`-test 2>&1)
+
+if [ $? -ne 0 ]; then
+  sanitized_build_output=$(printf "${build_output}" | sed -n 's/\[ build \] //p' | sed '/1\/1:/d')
+
+  jq -n --arg output "${sanitized_build_output}" '{version: 1, status: "error", message: $output}' > ${results_file}
+  echo "${slug}: done"
+  exit 0
+fi
 # Run the tests for the provided implementation file and redirect stdout and
-# stderr to capture it
-test_output=$(cd "${solution_dir}"; pack remove `basename *.ipkg .ipkg` > /dev/null; pack test `basename *.ipkg .ipkg` 2>&1)
-# TODO: substitute "false" with the actual command to run the test:
-# test_output=$(command_to_run_tests 2>&1)
+# sterr to capture it
+test_output=$(cd "${solution_dir}"; pack test `basename *.ipkg .ipkg` 2>&1)
 
 # Write the results.json file based on the exit code of the command that was 
 # just executed that tested the implementation file
