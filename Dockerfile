@@ -1,7 +1,8 @@
-FROM alpine:3.18
+FROM ghcr.io/stefan-hoeck/idris2-pack:nightly-240625
 
 # install packages required to run the tests
-RUN apk add --no-cache jq coreutils
+RUN apt-get update && apt-get install --yes jq
+RUN pack install tester
 
 WORKDIR /opt/test-runner
 COPY . .

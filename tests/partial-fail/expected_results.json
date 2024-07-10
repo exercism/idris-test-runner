@@ -1,5 +1,5 @@
 {
   "version": 1,
   "status": "fail",
-  "message": "TODO: replace with correct output"
+  "message": "hello should have correct value   ... \u001b[38;5;1mfailed\u001b[0m\n\u001b[38;5;1massertEq\u001b[0m failed\n  left  `\u001b[38;5;1m\"Goodbye, Mars!\"\u001b[0m`\n  right `\u001b[38;5;1m\"Farewell, Jupiter!\"\u001b[0m`"
 }

@@ -31,11 +31,18 @@ mkdir -p "${output_dir}"
 
 echo "${slug}: testing..."
 
+build_output=$(cd "${solution_dir}"; pack remove `basename *.ipkg .ipkg` > /dev/null; pack build `basename *.ipkg .ipkg`-test 2>&1)
+
+if [ $? -ne 0 ]; then
+  sanitized_build_output=$(printf "${build_output}" | sed -n 's/\[ build \] //p' | sed '/1\/1:/d')
+
+  jq -n --arg output "${sanitized_build_output}" '{version: 1, status: "error", message: $output}' > ${results_file}
+  echo "${slug}: done"
+  exit 0
+fi
 # Run the tests for the provided implementation file and redirect stdout and
-# stderr to capture it
-test_output=$(false)
-# TODO: substitute "false" with the actual command to run the test:
-# test_output=$(command_to_run_tests 2>&1)
+# sterr to capture it
+test_output=$(cd "${solution_dir}"; pack test `basename *.ipkg .ipkg` 2>&1)
 
 # Write the results.json file based on the exit code of the command that was 
 # just executed that tested the implementation file
@@ -45,8 +52,7 @@ else
     # OPTIONAL: Sanitize the output
     # In some cases, the test output might be overly verbose, in which case stripping
     # the unneeded information can be very helpful to the student
-    # sanitized_test_output=$(printf "${test_output}" | sed -n '/Test results:/,$p')
-
+    sanitized_test_output=$(printf "${test_output}" | head --lines=-4 -)
     # OPTIONAL: Manually add colors to the output to help scanning the output for errors
     # If the test output does not contain colors to help identify failing (or passing)
     # tests, it can be helpful to manually add colors to the output
@@ -54,7 +60,7 @@ else
     #      | GREP_COLOR='01;31' grep --color=always -E -e '^(ERROR:.*|.*failed)$|$' \
     #      | GREP_COLOR='01;32' grep --color=always -E -e '^.*passed$|$')
 
-    jq -n --arg output "${test_output}" '{version: 1, status: "fail", message: $output}' > ${results_file}
+    jq -n --arg output "${sanitized_test_output}" '{version: 1, status: "fail", message: $output}' > ${results_file}
 fi
 
 echo "${slug}: done"

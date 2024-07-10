@@ -1,0 +1,7 @@
+package helloworld-test
+version = 0.1.0
+depends = helloworld
+  , tester
+executable = "helloworld-test"
+main = Main
+sourcedir = "src"

@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "status": "fail",
-  "message": "TODO: replace with correct output"
+  "status": "error",
+  "message": "Error: While processing right hand side of tests. Undefined name hello. \n\nMain:12:33--12:38\n 08 | \n 09 | tests : List Test\n 10 | tests = \n 11 |   [ test \"hello should have correct value\" $ do\n 12 |       assertEq \"Goodbye, Mars!\" hello\n                                      ^^^^^"
 }
