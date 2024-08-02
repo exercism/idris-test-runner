@@ -52,7 +52,7 @@ else
     # OPTIONAL: Sanitize the output
     # In some cases, the test output might be overly verbose, in which case stripping
     # the unneeded information can be very helpful to the student
-    sanitized_test_output=$(printf "${test_output}" | head --lines=-4 -)
+    sanitized_test_output=$(printf "${test_output}" | head --lines=-3 -)
     # OPTIONAL: Manually add colors to the output to help scanning the output for errors
     # If the test output does not contain colors to help identify failing (or passing)
     # tests, it can be helpful to manually add colors to the output
