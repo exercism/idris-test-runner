@@ -1,4 +1,4 @@
-FROM ghcr.io/stefan-hoeck/idris2-pack:nightly-240625
+FROM ghcr.io/stefan-hoeck/idris2-pack:nightly-250523-jammy
 
 # install packages required to run the tests
 RUN apt-get update && apt-get install --yes jq
