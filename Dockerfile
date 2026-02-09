@@ -1,8 +1,8 @@
-FROM ghcr.io/stefan-hoeck/idris2-pack:nightly-250523-jammy
+FROM ghcr.io/stefan-hoeck/idris2-pack:nightly-260208-jammy
 
 # install packages required to run the tests
 RUN apt-get update && apt-get install --yes jq
-RUN pack install tester
+RUN pack install contrib tester
 
 WORKDIR /opt/test-runner
 COPY . .
