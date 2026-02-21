@@ -28,6 +28,7 @@ results_file="${output_dir}/results.json"
 
 # Create the output directory if it doesn't exist
 mkdir -p "${output_dir}"
+trap 'rm -rf "${output_dir}/build" "${output_dir}/test"' EXIT
 
 echo "${slug}: testing..."
 
