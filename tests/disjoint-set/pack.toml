@@ -1,0 +1,10 @@
+[custom.all.disjointset]
+type = "local"
+path = "."
+ipkg = "disjointset.ipkg"
+test = "test/test.ipkg"
+
+[custom.all.disjointset-test]
+type = "local"
+path = "test"
+ipkg = "test.ipkg"

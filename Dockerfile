@@ -6,6 +6,9 @@ RUN apt-get update && apt-get install --yes jq && rm -rf /var/lib/apt/lists/*
 # install the libraries exercises test against
 RUN pack install contrib tester
 
+# Remove the idris2 compiler-as-a-library package
+RUN rm -rf /root/.local/state/pack/install/*/idris2/idris2-0.8.0/idris2-0.8.0
+
 RUN rm -rf /root/.cache/pack/git
 
 FROM scratch
