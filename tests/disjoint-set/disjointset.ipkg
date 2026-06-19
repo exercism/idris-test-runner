@@ -1,0 +1,5 @@
+package disjointset
+
+sourcedir = "src"
+modules = DisjointSet
+depends = contrib
