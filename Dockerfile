@@ -23,7 +23,7 @@ ENV PACK_USER_DIR=/root/.config/pack \
     PACK_STATE_DIR=/root/.local/state/pack \
     PACK_CACHE_DIR=/root/.cache/pack \
     PACK_BIN_DIR=/root/.local/bin \
-    PATH=/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    PATH=/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
 
 COPY --from=builder /root/.local/bin        /root/.local/bin
 COPY --from=builder /root/.config/pack      /root/.config/pack
