@@ -19,8 +19,7 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* /usr/share/icons /usr/share/doc /usr/share/man
 
-ENV HOME=/root \
-    PACK_USER_DIR=/root/.config/pack \
+ENV PACK_USER_DIR=/root/.config/pack \
     PACK_STATE_DIR=/root/.local/state/pack \
     PACK_CACHE_DIR=/root/.cache/pack \
     PACK_BIN_DIR=/root/.local/bin \
