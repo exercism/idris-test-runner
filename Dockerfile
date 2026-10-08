@@ -8,9 +8,9 @@ RUN rm -rf /root/.local/state/pack/install/*/idris2/idris2-0.8.0/idris2-0.8.0
 
 RUN rm -rf /root/.cache/pack/git
 
-# Final image on the shared, pinned ubuntu:24.04 base (the idris2-pack base is
-# itself Ubuntu 24.04). Digest below is the 2026-04-10 build of 24.04.
-FROM ubuntu:24.04@sha256:c4a8d5503dfb2a3eb8ab5f807da5bc69a85730fb49b5cfca2330194ebcc41c7b
+# Final image on the shared, pinned ubuntu:24.04 base.
+# The idris2-pack base is itself Ubuntu 24.04.
+FROM ubuntu:24.04@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55
 
 # Same runtime deps idris2-pack installs (gcc/make/chezscheme/libgmp3-dev/git) plus jq.
 RUN apt-get update \
