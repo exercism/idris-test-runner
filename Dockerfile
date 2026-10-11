@@ -1,4 +1,4 @@
-FROM ghcr.io/stefan-hoeck/idris2-pack:nightly-260723-noble AS builder
+FROM ghcr.io/stefan-hoeck/idris2-pack:nightly-261009-noble AS builder
 
 # install the libraries exercises test against
 RUN pack install contrib tester
