@@ -31,3 +31,31 @@ jobs:
 
       - name: Run Tests in Docker
         run: bin/run-tests-in-docker.sh
+
+  test-all-exercises:
+    name: Test all exercises
+    runs-on: ubuntu-26.04
+    steps:
+      - name: Checkout idris-test-runner
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Checkout idris repo
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: exercism/idris
+          path: idris_repo
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069
+
+      - name: Build Docker image from cache
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc
+        with:
+          context: .
+          push: false
+          load: true
+          tags: exercism/idris-test-runner
+          cache-from: type=gha
+
+      - name: Run tests on all exercises
+        run: bin/run-all-exercises-in-docker.sh idris_repo
