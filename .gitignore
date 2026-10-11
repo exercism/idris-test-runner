@@ -1,2 +1,3 @@
 /tests/**/*/results.json
 build/
+/idris_repo/
