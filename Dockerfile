@@ -10,7 +10,7 @@ RUN rm -rf /root/.cache/pack/git
 
 # Final image on the shared, pinned ubuntu:24.04 base.
 # The idris2-pack base is itself Ubuntu 24.04.
-FROM ubuntu:24.04@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55
+FROM ubuntu:25.10@sha256:7cc5e35f6567ee8c66d2abb4aab0fd866669e6207c237c3a8f0947a5c7f17092
 
 # Same runtime deps idris2-pack installs (gcc/make/chezscheme/libgmp3-dev/git) plus jq.
 RUN apt-get update \
