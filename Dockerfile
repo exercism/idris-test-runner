@@ -1,20 +1,18 @@
-FROM ghcr.io/stefan-hoeck/idris2-pack:nightly-261101-noble AS builder
+FROM ghcr.io/stefan-hoeck/idris2-pack:nightly-261112-resolute AS builder
 
-# install the libraries exercises test against
-RUN pack install contrib tester
-
+# Install the libraries used by the test runner.
 # Remove the idris2 compiler-as-a-library package
-RUN rm -rf /root/.local/state/pack/install/*/idris2/idris2-0.8.0/idris2-0.8.0
+RUN pack install contrib tester \
+    && rm -r /root/.local/state/pack/install/*/idris2/idris2-0.8.0/idris2-0.8.0 \
+    && rm -r /root/.cache/pack/git
 
-RUN rm -rf /root/.cache/pack/git
-
-# Final image on the shared, pinned ubuntu:24.04 base.
-# The idris2-pack base is itself Ubuntu 24.04.
+# Final image on the shared, pinned ubuntu base.
+# The idris2-pack base is itself Ubuntu, keeping the versions matched.
 FROM ubuntu:26.04@sha256:6a06111c3b0a8600feadb270aec771dc239bf407b25625f93f44ab00e11f4d3c
 
 # Same runtime deps idris2-pack installs (gcc/make/chezscheme/libgmp3-dev/git) plus jq.
 RUN apt-get update \
-    && apt-get install --yes --no-install-recommends gcc make chezscheme libgmp3-dev git jq \
+    && apt-get install --yes --no-install-recommends chezscheme gcc jq libgmp3-dev make \
     && apt-get purge --auto-remove -y \
     && apt-get clean \
     && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/* /usr/share/icons /usr/share/doc /usr/share/man
