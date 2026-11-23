@@ -30,4 +30,9 @@ COPY --from=builder /root/.cache/pack       /root/.cache/pack
 
 WORKDIR /opt/test-runner
 COPY . .
+# Record the paths pack passes to idris2, so that bin/run.sh can call idris2
+# directly without starting pack on every run.
+RUN printf 'export PATH="%s:$PATH"\nexport IDRIS2_PACKAGE_PATH="%s"\nexport IDRIS2_LIBS="%s"\nexport IDRIS2_DATA="%s"\n' \
+        "$(dirname "$(pack app-path idris2)")" "$(pack package-path)" "$(pack libs-path)" "$(pack data-path)" \
+        > idris2-env
 ENTRYPOINT ["/opt/test-runner/bin/run.sh"]
