@@ -35,26 +35,19 @@ echo "${slug}: testing..."
 # it starts idris2. bin/idris2-env.sh sets the paths pack would pass to idris2,
 # so the runner calls idris2 and the test executable directly.
 . /opt/test-runner/bin/idris2-env.sh
-package=$(cd "${solution_dir}"; basename *.ipkg .ipkg)
 
 # Starting idris2 takes about half a second. Instead of building the solution's
 # package and then the test package, the runner links the modules of both into
-# one folder and builds them as one package in a single idris2 run. That
-# package depends on the libraries used by the solution and the tests. The
-# folder sits in the solution folder, because /tmp may not allow executables.
+# one folder and builds them as one package (test-runner.ipkg) in a single
+# idris2 run. The folder sits in the solution folder, because /tmp may not
+# allow executables.
 work_dir="${solution_dir}/build/test-runner"
 trap 'rm -rf "${output_dir}/build" "${output_dir}/test" "${work_dir}"' EXIT
 mkdir -p "${work_dir}/src"
 ln -s "${solution_dir}"/test/src/* "${solution_dir}"/src/* "${work_dir}/src"
-cat > "${work_dir}/test.ipkg" <<EOF
-package ${package}-test
-depends = contrib, tester
-main = Main
-executable = "${package}-test"
-sourcedir = "src"
-EOF
+cp /opt/test-runner/test-runner.ipkg "${work_dir}"
 
-build_output=$(cd "${work_dir}" && idris2 --build test.ipkg 2>&1)
+build_output=$(cd "${work_dir}" && idris2 --build test-runner.ipkg 2>&1)
 
 if [ $? -ne 0 ]; then
   sanitized_build_output=$(printf '%s' "${build_output}" | sed '/^[0-9]*\/[0-9]*: Building /d')
@@ -65,7 +58,7 @@ if [ $? -ne 0 ]; then
 fi
 # Run the tests for the provided implementation file and redirect stdout and
 # sterr to capture it
-test_output=$(cd "${solution_dir}"; "${work_dir}/build/exec/${package}-test" 2>&1)
+test_output=$(cd "${solution_dir}"; "${work_dir}/build/exec/test-runner" 2>&1)
 
 # Write the results.json file based on the exit code of the command that was 
 # just executed that tested the implementation file

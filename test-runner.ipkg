@@ -1,0 +1,7 @@
+-- bin/run.sh copies this package file next to links to the solution's modules
+-- and the test modules, and builds them all as one package.
+package test-runner
+depends = contrib, tester
+main = Main
+executable = "test-runner"
+sourcedir = "src"
