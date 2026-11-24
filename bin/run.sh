@@ -28,14 +28,27 @@ results_file="${output_dir}/results.json"
 
 # Create the output directory if it doesn't exist
 mkdir -p "${output_dir}"
-trap 'rm -rf "${output_dir}/build" "${output_dir}/test"' EXIT
 
 echo "${slug}: testing..."
 
-build_output=$(cd "${solution_dir}"; pack remove `basename *.ipkg .ipkg` > /dev/null; pack build `basename *.ipkg .ipkg`-test 2>&1)
+# Each pack command spends over a second loading its package collection before
+# it starts idris2. bin/idris2-env.sh sets the paths pack would pass to idris2,
+# so the runner calls idris2 and the test executable directly.
+. /opt/test-runner/bin/idris2-env.sh
+package=$(cd "${solution_dir}"; basename *.ipkg .ipkg)
+
+# The test package depends on the solution's package. Linking the solution's
+# build folder into a temporary package directory lets idris2 find it without
+# installing it.
+packages_dir=$(mktemp -d)
+trap 'rm -rf "${output_dir}/build" "${output_dir}/test" "${packages_dir}"' EXIT
+ln -s "${solution_dir}/build/ttc" "${packages_dir}/${package}-0"
+export IDRIS2_PACKAGE_PATH="${IDRIS2_PACKAGE_PATH}:${packages_dir}"
+
+build_output=$(cd "${solution_dir}" && idris2 --build "${package}.ipkg" 2>&1 && cd test && idris2 --build test.ipkg 2>&1)
 
 if [ $? -ne 0 ]; then
-  sanitized_build_output=$(printf "${build_output}" | sed -n 's/\[ build \] //p' | sed '/1\/1:/d')
+  sanitized_build_output=$(printf '%s' "${build_output}" | sed '/1\/1:/d')
 
   jq -n --arg output "${sanitized_build_output}" '{version: 1, status: "error", message: $output}' > ${results_file}
   echo "${slug}: done"
@@ -43,7 +56,7 @@ if [ $? -ne 0 ]; then
 fi
 # Run the tests for the provided implementation file and redirect stdout and
 # sterr to capture it
-test_output=$(cd "${solution_dir}"; pack test `basename *.ipkg .ipkg` 2>&1)
+test_output=$(cd "${solution_dir}"; test/build/exec/"${package}"-test 2>&1)
 
 # Write the results.json file based on the exit code of the command that was 
 # just executed that tested the implementation file
@@ -53,7 +66,7 @@ else
     # OPTIONAL: Sanitize the output
     # In some cases, the test output might be overly verbose, in which case stripping
     # the unneeded information can be very helpful to the student
-    sanitized_test_output=$(printf "${test_output}" | head --lines=-3 -)
+    sanitized_test_output=$(printf '%s' "${test_output}")
     # OPTIONAL: Manually add colors to the output to help scanning the output for errors
     # If the test output does not contain colors to help identify failing (or passing)
     # tests, it can be helpful to manually add colors to the output
