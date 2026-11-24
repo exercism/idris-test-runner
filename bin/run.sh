@@ -32,9 +32,9 @@ mkdir -p "${output_dir}"
 echo "${slug}: testing..."
 
 # Each pack command spends over a second loading its package collection before
-# it starts idris2. The image records the paths pack would pass to idris2 (see
-# the Dockerfile), so the runner calls idris2 and the test executable directly.
-. /opt/test-runner/idris2-env
+# it starts idris2. bin/idris2-env.sh sets the paths pack would pass to idris2,
+# so the runner calls idris2 and the test executable directly.
+. /opt/test-runner/bin/idris2-env.sh
 package=$(cd "${solution_dir}"; basename *.ipkg .ipkg)
 
 # The test package depends on the solution's package. Linking the solution's
@@ -48,7 +48,7 @@ export IDRIS2_PACKAGE_PATH="${IDRIS2_PACKAGE_PATH}:${packages_dir}"
 build_output=$(cd "${solution_dir}" && idris2 --build "${package}.ipkg" 2>&1 && cd test && idris2 --build test.ipkg 2>&1)
 
 if [ $? -ne 0 ]; then
-  sanitized_build_output=$(printf "${build_output}" | sed '/1\/1:/d')
+  sanitized_build_output=$(printf '%s' "${build_output}" | sed '/1\/1:/d')
 
   jq -n --arg output "${sanitized_build_output}" '{version: 1, status: "error", message: $output}' > ${results_file}
   echo "${slug}: done"
@@ -66,7 +66,7 @@ else
     # OPTIONAL: Sanitize the output
     # In some cases, the test output might be overly verbose, in which case stripping
     # the unneeded information can be very helpful to the student
-    sanitized_test_output=$(printf "${test_output}")
+    sanitized_test_output=$(printf '%s' "${test_output}")
     # OPTIONAL: Manually add colors to the output to help scanning the output for errors
     # If the test output does not contain colors to help identify failing (or passing)
     # tests, it can be helpful to manually add colors to the output
